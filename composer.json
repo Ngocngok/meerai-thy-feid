@@ -1,1 +1,5 @@
-{}
+{
+    "name":"longnt/aquaponic",
+    "type": "project",
+    "description": "The Laravel Framework."
+}
