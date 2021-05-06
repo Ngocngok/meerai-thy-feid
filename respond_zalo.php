@@ -3,6 +3,11 @@ require __DIR__ . '/vendor/autoload.php';
 
 define('OA_SECRET_KEY', "oaZrye5aiC46utQaKC5K");
 $json = file_get_contents("php://input");
+
+$fp = fopen('data.txt', 'a');//opens file in append mode  
+fwrite($fp, $json);  
+fclose($fp);  
+
 $headers = getallheaders();
 if (0 < strlen($json) && isset($headers["X-ZEvent-Signature"])) :
     $data = json_decode($json, false, 512, JSON_BIGINT_AS_STRING);
