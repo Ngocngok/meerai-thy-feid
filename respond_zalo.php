@@ -13,13 +13,20 @@ if (0 < strlen($json) && isset($headers["X-ZEvent-Signature"])) :
         if (0 === strcmp($mac1, $mac2)) : // data verified
         // TODO: Process the received data
         // or forward to another process.
-            callZaloAPI($json);
+            callZaloAPI($data);
+        else : 
+            print "ERROR!";
         endif;
+        
     endif;
+else :
+    print "No X-ZEvent specified!";
 endif;
 
-function callZaloAPI($input)
+function callZaloAPI($data)
 {
+    // $parsed = json_decode($json, true);
+
     // API URL
     $url = 'https://openapi.zalo.me/v2.0/oa/message?access_token=gigFH8RvGpgjpO5EZ_DFEwp2X4cFwqXMrwNyLlZDQo6LcTW_tjjzJQssiqVGq0Hog9EiGeV753BIXRitYiq7EQMVk23O_1WMZCdI2UxZHYwIb_WPyAHDCjdjvokpgqitsSxY19A4DNUujlO7xDTwTAsZmLtbyMbHjxpSLTt3T7wDgxvwe-WtTzAPZclypI1ej8k9VEAy4al8YeT5cFiJJD6EsMIbm1fHuP2CEf3aHox3jlWIxkPsPuokraBv_4TyrBVn3QVXCZhGgwKmgiyr0EE6WH2erWe1Gni7-aQ2uqOo';
 
@@ -27,15 +34,16 @@ function callZaloAPI($input)
     $ch = curl_init($url);
 
     // Setup request to send json via POST
-    $data = array(
+    $sent = array(
         'recipient' => array(
-            'sender_id' => $input['sender']['id']
+            'sender_id' => $data['sender']['id']
         ),
         'message' => array(
             'text' => "Hi there!"
         )
     );
-    $payload = json_encode($data);
+    print_r($sent);
+    $payload = json_encode($sent);
 
     // Attach encoded JSON string to the POST fields
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
@@ -53,4 +61,5 @@ function callZaloAPI($input)
     // Close cURL resource
     curl_close($ch);
 }
+
 ?>
