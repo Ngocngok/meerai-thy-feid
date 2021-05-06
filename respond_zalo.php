@@ -32,33 +32,40 @@ function callZaloAPI($data)
 {
     // $parsed = json_decode($json, true);
 
-    // API URL
-    $url = 'https://openapi.zalo.me/v2.0/oa/message?access_token=gigFH8RvGpgjpO5EZ_DFEwp2X4cFwqXMrwNyLlZDQo6LcTW_tjjzJQssiqVGq0Hog9EiGeV753BIXRitYiq7EQMVk23O_1WMZCdI2UxZHYwIb_WPyAHDCjdjvokpgqitsSxY19A4DNUujlO7xDTwTAsZmLtbyMbHjxpSLTt3T7wDgxvwe-WtTzAPZclypI1ej8k9VEAy4al8YeT5cFiJJD6EsMIbm1fHuP2CEf3aHox3jlWIxkPsPuokraBv_4TyrBVn3QVXCZhGgwKmgiyr0EE6WH2erWe1Gni7-aQ2uqOo';
 
     // Create a new cURL resource
-    $ch = curl_init($url);
+    $ch = curl_init();
 
     // Setup request to send json via POST
     $sent = array(
         'recipient' => array(
             'sender_id' => $data['sender']['id']
+            // 'user_id' => '2174132164291926302'
         ),
         'message' => array(
             'text' => "Hi there!"
         )
     );
-    print_r($sent);
+    
     $payload = json_encode($sent);
-
+    // print_r($payload);
     // Attach encoded JSON string to the POST fields
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 
+    // Set URL
+    curl_setopt($ch, CURLOPT_URL, 'https://openapi.zalo.me/v2.0/oa/message?access_token=gigFH8RvGpgjpO5EZ_DFEwp2X4cFwqXMrwNyLlZDQo6LcTW_tjjzJQssiqVGq0Hog9EiGeV753BIXRitYiq7EQMVk23O_1WMZCdI2UxZHYwIb_WPyAHDCjdjvokpgqitsSxY19A4DNUujlO7xDTwTAsZmLtbyMbHjxpSLTt3T7wDgxvwe-WtTzAPZclypI1ej8k9VEAy4al8YeT5cFiJJD6EsMIbm1fHuP2CEf3aHox3jlWIxkPsPuokraBv_4TyrBVn3QVXCZhGgwKmgiyr0EE6WH2erWe1Gni7-aQ2uqOo');
+    
+    // Fix curl with https security hole later
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+
     // Set the content type to application/json
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain')); 
 
     // Return response instead of outputting
-    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
+    // Set POST
+    curl_setopt($ch, CURLOPT_POST, true);
 
     // Execute the POST request
     $result = curl_exec($ch);
@@ -66,5 +73,4 @@ function callZaloAPI($data)
     // Close cURL resource
     curl_close($ch);
 }
-
 ?>
