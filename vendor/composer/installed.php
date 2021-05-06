@@ -6,11 +6,20 @@
     'aliases' => 
     array (
     ),
-    'reference' => '266494bd1ef86d50f83c66cf38a089bdb896e2ea',
+    'reference' => '822e0329f7b188a2ba747067bc46a914ef73f0a1',
     'name' => 'longnt/aquaponic',
   ),
   'versions' => 
   array (
+    'curl/curl' => 
+    array (
+      'pretty_version' => '2.3.2',
+      'version' => '2.3.2.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '8a3e3f1cb6061180c53cb18e2ad823f68ff91ac0',
+    ),
     'longnt/aquaponic' => 
     array (
       'pretty_version' => 'dev-master',
@@ -18,7 +27,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '266494bd1ef86d50f83c66cf38a089bdb896e2ea',
+      'reference' => '822e0329f7b188a2ba747067bc46a914ef73f0a1',
     ),
     'zaloplatform/zalo-php-sdk' => 
     array (

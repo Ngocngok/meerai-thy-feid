@@ -1,8 +1,9 @@
 {
     "name":"longnt/aquaponic",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "thy-meerai-shaa-feid",
     "require": {
-        "zaloplatform/zalo-php-sdk": "^2.0"
+        "zaloplatform/zalo-php-sdk": "^2.0",
+        "curl/curl": "^2.3"
     }
 }
