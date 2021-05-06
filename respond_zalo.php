@@ -12,11 +12,11 @@ $ch = curl_init($url);
 // Setup request to send json via POST
 $data = array(
     'recipient' => array(
-        'message_id' => $data['sender']['id']
+        'sender_id' => $data['sender']['id']
     ),
     'message' => array(
         'text' => "Hi there!"
-        )
+    )
 );
 $payload = json_encode($data);
 
