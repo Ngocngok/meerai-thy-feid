@@ -28,7 +28,7 @@ fclose($fp);
 //     print "No X-ZEvent specified!";
 // endif;
 
-callZaloAPI($json);
+
 
 function callZaloAPI($data)
 {
@@ -41,7 +41,7 @@ function callZaloAPI($data)
     // Setup request to send json via POST
     $sent = array(
         'recipient' => array(
-            'sender_id' => $parsed['sender']['id']
+            'user_id' => $parsed['sender']['id']
             // 'user_id' => '2174132164291926302'
         ),
         'message' => array(
@@ -71,8 +71,10 @@ function callZaloAPI($data)
 
     // Execute the POST request
     $result = curl_exec($ch);
-
+    var_dump($result);
     // Close cURL resource
     curl_close($ch);
 }
+
+callZaloAPI($json);
 ?>
