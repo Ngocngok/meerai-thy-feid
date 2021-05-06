@@ -1,38 +1,56 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
+define('OA_SECRET_KEY', "oaZrye5aiC46utQaKC5K");
+$json = file_get_contents("php://input");
+$headers = getallheaders();
+if (0 < strlen($json) && isset($headers["X-ZEvent-Signature"])) :
+    $data = json_decode($json, false, 512, JSON_BIGINT_AS_STRING);
+    if ($data) :
+        // Calculate the MAC value from received data       
+        $mac_1 = "mac=" . hash("sha256", $data->app_id . $json . $data->timestamp . OA_SECRET_KEY);
+        $mac_2 = $headers["X-ZEvent-Signature"];
+        if (0 === strcmp($mac1, $mac2)) : // data verified
+        // TODO: Process the received data
+        // or forward to another process.
+            callZaloAPI($json);
+        endif;
+    endif;
+endif;
 
-// API URL
-$url = 'https://openapi.zalo.me/v2.0/oa/message?access_token=gigFH8RvGpgjpO5EZ_DFEwp2X4cFwqXMrwNyLlZDQo6LcTW_tjjzJQssiqVGq0Hog9EiGeV753BIXRitYiq7EQMVk23O_1WMZCdI2UxZHYwIb_WPyAHDCjdjvokpgqitsSxY19A4DNUujlO7xDTwTAsZmLtbyMbHjxpSLTt3T7wDgxvwe-WtTzAPZclypI1ej8k9VEAy4al8YeT5cFiJJD6EsMIbm1fHuP2CEf3aHox3jlWIxkPsPuokraBv_4TyrBVn3QVXCZhGgwKmgiyr0EE6WH2erWe1Gni7-aQ2uqOo';
+function callZaloAPI($input)
+{
+    // API URL
+    $url = 'https://openapi.zalo.me/v2.0/oa/message?access_token=gigFH8RvGpgjpO5EZ_DFEwp2X4cFwqXMrwNyLlZDQo6LcTW_tjjzJQssiqVGq0Hog9EiGeV753BIXRitYiq7EQMVk23O_1WMZCdI2UxZHYwIb_WPyAHDCjdjvokpgqitsSxY19A4DNUujlO7xDTwTAsZmLtbyMbHjxpSLTt3T7wDgxvwe-WtTzAPZclypI1ej8k9VEAy4al8YeT5cFiJJD6EsMIbm1fHuP2CEf3aHox3jlWIxkPsPuokraBv_4TyrBVn3QVXCZhGgwKmgiyr0EE6WH2erWe1Gni7-aQ2uqOo';
 
-// Create a new cURL resource
-$ch = curl_init($url);
+    // Create a new cURL resource
+    $ch = curl_init($url);
 
-// Setup request to send json via POST
-$data = array(
-    'recipient' => array(
-        'sender_id' => $data['sender']['id']
-    ),
-    'message' => array(
-        'text' => "Hi there!"
-    )
-);
-$payload = json_encode($data);
+    // Setup request to send json via POST
+    $data = array(
+        'recipient' => array(
+            'sender_id' => $input['sender']['id']
+        ),
+        'message' => array(
+            'text' => "Hi there!"
+        )
+    );
+    $payload = json_encode($data);
 
-// Attach encoded JSON string to the POST fields
-curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    // Attach encoded JSON string to the POST fields
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 
-// Set the content type to application/json
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+    // Set the content type to application/json
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
-// Return response instead of outputting
-// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // Return response instead of outputting
+    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 
-// Execute the POST request
-$result = curl_exec($ch);
+    // Execute the POST request
+    $result = curl_exec($ch);
 
-// Close cURL resource
-curl_close($ch);
+    // Close cURL resource
+    curl_close($ch);
+}
 ?>
