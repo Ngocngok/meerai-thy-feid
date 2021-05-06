@@ -1,5 +1,8 @@
 {
     "name":"longnt/aquaponic",
     "type": "project",
-    "description": "The Laravel Framework."
+    "description": "The Laravel Framework.",
+    "require": {
+        "zaloplatform/zalo-php-sdk": "^2.0"
+    }
 }
