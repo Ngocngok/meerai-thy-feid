@@ -8,29 +8,31 @@ $fp = fopen('data.txt', 'a');//opens file in append mode
 fwrite($fp, $json);  
 fclose($fp);  
 
-$headers = getallheaders();
-if (0 < strlen($json) && isset($headers["X-ZEvent-Signature"])) :
-    $data = json_decode($json, false, 512, JSON_BIGINT_AS_STRING);
-    if ($data) :
-        // Calculate the MAC value from received data       
-        $mac_1 = "mac=" . hash("sha256", $data->app_id . $json . $data->timestamp . OA_SECRET_KEY);
-        $mac_2 = $headers["X-ZEvent-Signature"];
-        if (0 === strcmp($mac1, $mac2)) : // data verified
-        // TODO: Process the received data
-        // or forward to another process.
-            callZaloAPI($data);
-        else : 
-            print "ERROR!";
-        endif;
+// $headers = getallheaders();
+// if (0 < strlen($json) && isset($headers["X-ZEvent-Signature"])) :
+//     $data = json_decode($json, false, 512, JSON_BIGINT_AS_STRING);
+//     if ($data) :
+//         // Calculate the MAC value from received data       
+//         $mac_1 = "mac=" . hash("sha256", $data->app_id . $json . $data->timestamp . OA_SECRET_KEY);
+//         $mac_2 = $headers["X-ZEvent-Signature"];
+//         if (0 === strcmp($mac1, $mac2)) : // data verified
+//         // TODO: Process the received data
+//         // or forward to another process.
+//             callZaloAPI($data);
+//         else : 
+//             print "ERROR!";
+//         endif;
         
-    endif;
-else :
-    print "No X-ZEvent specified!";
-endif;
+//     endif;
+// else :
+//     print "No X-ZEvent specified!";
+// endif;
+
+callZaloAPI($json);
 
 function callZaloAPI($data)
 {
-    // $parsed = json_decode($json, true);
+    $parsed = json_decode($data, true);
 
 
     // Create a new cURL resource
@@ -39,7 +41,7 @@ function callZaloAPI($data)
     // Setup request to send json via POST
     $sent = array(
         'recipient' => array(
-            'sender_id' => $data['sender']['id']
+            'sender_id' => $parsed['sender']['id']
             // 'user_id' => '2174132164291926302'
         ),
         'message' => array(
