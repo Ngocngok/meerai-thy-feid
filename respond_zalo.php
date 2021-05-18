@@ -41,7 +41,7 @@ function callZaloAPI($data)
     // Setup request to send json via POST
     $sent = array(
         'recipient' => array(
-            'user_id' => $parsed['sender']['id']
+            'message_id' => $parsed['message']['msg_id']
             // 'user_id' => '2174132164291926302'
         ),
         'message' => array(
@@ -61,7 +61,7 @@ function callZaloAPI($data)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
 
     // Set the content type to application/json
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain')); 
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json')); 
 
     // Return response instead of outputting
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
