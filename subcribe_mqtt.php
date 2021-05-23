@@ -6,6 +6,7 @@ $data = json_decode($data, true);
 
 // handlle message
 if (str_contains(strtolower($data['message']['text']), "#humidity")) {
+    fetchData('aquaponic/humidity');
 }
 
 
