@@ -4,6 +4,13 @@ require __DIR__ . '/vendor/autoload.php';
 $data = file_get_contents("php://input");
 $data = json_decode($data, true);
 
+
+if (!function_exists('str_contains')) {
+    function str_contains(string $haystack, string $needle): bool
+    {
+        return '' === $needle || false !== strpos($haystack, $needle);
+    }
+}
 // handlle message
 if (str_contains(strtolower($data['message']['text']), "#humidity")) {
     fetchData('aquaponic/humidity');
@@ -49,7 +56,9 @@ function fetchData($topic)
 
     for ($i = 0; $i < 6; $i++) {
         curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/pull");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $server_output = curl_exec($ch);
+        var_dump($server_output);
         if (strlen($server_output) != 2) {
             sendResult($server_output);
             return;
@@ -67,7 +76,7 @@ function sendResult($content)
     if ($content == "ERROR") {
         $rep = "The system encountered an error while fetching data!";
     } else {
-        $rep = "The " . substr($content['topic'], 10) . " is " . base64_decode($content['payload']) . ".";
+        $rep = "The " . substr($content[0]['topic'], 10) . " is " . base64_decode($content[0]['payload']) . ".";
     }
 
     // Create a new cURL resource
@@ -82,6 +91,7 @@ function sendResult($content)
         )
     );
     $payload = json_encode($sent);
+    var_dump($payload);
     // print_r($payload);
     // Attach encoded JSON string to the POST fields
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
