@@ -78,11 +78,12 @@ function fetchData($topic)
 
 function sendResult($content)
 {
-    $content = json_decode($content, true);
     $rep = "";
     if ($content == "ERROR") {
         $rep = "The system encountered an error while fetching data!";
     } else {
+
+        $content = json_decode($content, true);
         $rep = "The " . substr($content[0]['topic'], 10) . " is " . base64_decode($content[0]['payload']) . ".";
     }
 
