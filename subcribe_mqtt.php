@@ -1,8 +1,14 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
+$fp = fopen('data.txt', 'a'); //opens file in append mode  
+
+
+
 
 $data = file_get_contents("php://input");
 $data = json_decode($data, true);
+
+fwrite($fp, $data);
 
 
 if (!function_exists('str_contains')) {
@@ -58,7 +64,8 @@ function fetchData($topic)
         curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/pull");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $server_output = curl_exec($ch);
-        var_dump($server_output);
+
+        fwrite($GLOBALS['fp'], $server_output);
         if (strlen($server_output) != 2) {
             sendResult($server_output);
             return;
@@ -91,7 +98,8 @@ function sendResult($content)
         )
     );
     $payload = json_encode($sent);
-    var_dump($payload);
+
+    fwrite($GLOBALS['fp'], $payload);
     // print_r($payload);
     // Attach encoded JSON string to the POST fields
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
@@ -107,7 +115,7 @@ function sendResult($content)
     curl_setopt($ch, CURLOPT_POST, true);
     // Execute the POST request
     $result = curl_exec($ch);
-    var_dump($result);
+    fwrite($GLOBALS['fp'], $result);
     // Close cURL resource
     curl_close($ch);
 }
@@ -190,4 +198,9 @@ return;
 // curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/logout");
 // $server_output = curl_exec($ch);
 // var_dump($server_output);
+
+
+fwrite($fp, time() . "---------------------------------------------------------------\n");
+fclose($fp);
+
 curl_close($ch);
