@@ -6,9 +6,10 @@ $fp = fopen('data.txt', 'a'); //opens file in append mode
 
 
 $data = file_get_contents("php://input");
+fwrite($fp, $data . '');
 $data = json_decode($data, true);
 
-fwrite($fp, $data);
+
 
 
 if (!function_exists('str_contains')) {
