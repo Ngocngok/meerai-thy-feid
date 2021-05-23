@@ -38,6 +38,7 @@ function callZaloAPI($data)
     curl_exec($ch);
 
     curl_setopt($ch, CURLOPT_URL, './subcribe_mqtt');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBALS('json'));
     curl_setopt($ch, CURLOPT_TIMEOUT, 13);
     curl_exec($ch);
 
