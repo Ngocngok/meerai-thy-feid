@@ -32,6 +32,8 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
 // Execute the POST request
 $result = curl_exec($ch);
+sleep(1);
+$result = curl_exec($ch);
 
 // Close cURL resource
 curl_close($ch);
