@@ -37,7 +37,7 @@ function callZaloAPI($data)
     // Execute the POST request
     curl_exec($ch);
 
-    curl_setopt($ch, CURLOPT_URL, './subcribe_mqtt');
+    curl_setopt($ch, CURLOPT_URL, 'https://nowherenear.herokuapp.com/subscribe_mqtt.php');
     curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBALS('json'));
     curl_setopt($ch, CURLOPT_TIMEOUT, 13);
     curl_exec($ch);
