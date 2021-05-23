@@ -3,6 +3,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 define('OA_SECRET_KEY', "oaZrye5aiC46utQaKC5K");
 $json = file_get_contents("php://input");
+print $json;
 
 
 function callZaloAPI($data)
@@ -38,7 +39,7 @@ function callZaloAPI($data)
     curl_exec($ch);
 
     curl_setopt($ch, CURLOPT_URL, 'https://nowherenear.herokuapp.com/subscribe_mqtt.php');
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBALS('json'));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $GLOBALS['json']);
     curl_setopt($ch, CURLOPT_TIMEOUT, 13);
     curl_exec($ch);
 
