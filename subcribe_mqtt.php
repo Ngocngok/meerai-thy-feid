@@ -21,8 +21,71 @@ if (!function_exists('str_contains')) {
 // handlle message
 if (str_contains(strtolower($data['message']['text']), "#humidity")) {
     fetchData('aquaponic/humidity');
+} else if (str_contains(strtolower($data['message']['text']), "#airtemperature")) {
+    fetchData('aquaponic/airtemperature');
+} else if (str_contains(strtolower($data['message']['text']), "#watertemperature")) {
+    fetchData('aquaponic/watertemperature');
+} else if (str_contains(strtolower($data['message']['text']), "#waterdistance")) {
+    fetchData('aquaponic/waterdistance');
+} else if (str_contains(strtolower($data['message']['text']), "#level")) {
+    fetchData('aquaponic/level');
+} else if (str_contains(strtolower($data['message']['text']), "#turnonpump")) {
+    remoteControll('pump', 0);
+} else if (str_contains(strtolower($data['message']['text']), "#turnoffpump")) {
+    remoteControll('pump', 1);
+} else if (str_contains(strtolower($data['message']['text']), "#turnonvalve")) {
+    remoteControll('valve', 0);
+} else if (str_contains(strtolower($data['message']['text']), "#turnoffvalve")) {
+    remoteControll('valve', 1);
+} else {
+    helpFunction();
 }
 
+function helpFunction()
+{
+    $rep = 'Some common usage: #airtemperature, #watertemperature, #waterdistance, #level, #turnonpump, #turnoffpump, #turnonvalve, #turnoffvalve';
+    sendToZaloClient($rep);
+}
+
+function remoteControll($equipment, $option)
+{
+    $ch = curl_init();
+    //-------------------------------login----------------------------------------------
+    $body = array('clientId' => 'ANormalUser', 'userName' => 'anormaluser', 'password' => 'anormaluser', 'cleanSession' => true);
+    $body = json_encode($body);
+    curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/login");
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    // Receive server response ...
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //gotta go fast, security later on
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    $server_output = curl_exec($ch);
+    //cookies for myqtthub api
+    $cookies = json_decode($server_output, true);
+    $cookies = $cookies['tokenId'];
+
+    //-------------------------------publish----------------------------------------------
+    $body = array(
+        'topic' => 'aquaponic/' . $equipment,
+        'qos' => 1,
+        'payload' => base64_encode($option),
+        'retain' => false,
+        'dup' => false,
+        'tokenId' => $cookies
+    );
+    $body = json_encode($body);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/publish");
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    curl_setopt($ch, CURLOPT_COOKIE, 'tokenId=' . $cookies);
+    //gotta go fast, security later on
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+    $server_output = curl_exec($ch);
+}
 
 function fetchData($topic)
 {
@@ -62,11 +125,13 @@ function fetchData($topic)
     $server_output = curl_exec($ch);
 
     for ($i = 0; $i < 6; $i++) {
+
+    //-------------------------------pull------------------------------------------------
         curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/pull");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $server_output = curl_exec($ch);
 
-        fwrite($GLOBALS['fp'], $server_output);
+        // fwrite($GLOBALS['fp'], $server_output);
         if (strlen($server_output) != 2) {
             sendResult($server_output);
             return;
@@ -88,23 +153,27 @@ function sendResult($content)
         $rep = "The " . substr($content[0]['topic'], 10) . " is " . base64_decode($content[0]['payload']) . ".";
     }
 
-    // Create a new cURL resource
-    $ch = curl_init();
-    // Setup request to send json via POST
+    sendToZaloClient($rep);
+}
+
+// fclose($fp);
+
+
+function sendToZaloClient($payload)
+{
     $sent = array(
         'recipient' => array(
             'message_id' => $GLOBALS['data']['message']['msg_id']
         ),
         'message' => array(
-            'text' => $rep
+            'text' => $payload
         )
     );
-    $payload = json_encode($sent);
-
-    fwrite($GLOBALS['fp'], $payload);
+    $sent = json_encode($sent);
+    $ch = curl_init();
     // print_r($payload);
     // Attach encoded JSON string to the POST fields
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $sent);
     // Set URL
     curl_setopt($ch, CURLOPT_URL, 'https://openapi.zalo.me/v2.0/oa/message?access_token=gigFH8RvGpgjpO5EZ_DFEwp2X4cFwqXMrwNyLlZDQo6LcTW_tjjzJQssiqVGq0Hog9EiGeV753BIXRitYiq7EQMVk23O_1WMZCdI2UxZHYwIb_WPyAHDCjdjvokpgqitsSxY19A4DNUujlO7xDTwTAsZmLtbyMbHjxpSLTt3T7wDgxvwe-WtTzAPZclypI1ej8k9VEAy4al8YeT5cFiJJD6EsMIbm1fHuP2CEf3aHox3jlWIxkPsPuokraBv_4TyrBVn3QVXCZhGgwKmgiyr0EE6WH2erWe1Gni7-aQ2uqOo');
     // Fix curl with https security hole later
@@ -117,92 +186,6 @@ function sendResult($content)
     curl_setopt($ch, CURLOPT_POST, true);
     // Execute the POST request
     $result = curl_exec($ch);
-    fwrite($GLOBALS['fp'], $result);
     // Close cURL resource
     curl_close($ch);
 }
-
-return;
-
-
-
-// curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/get-subscriptions");
-// curl_setopt($ch, CURLOPT_POST, 1);
-// curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-// curl_setopt($ch, CURLOPT_COOKIE, 'tokenId=' . $cookies);
-// // curl_setopt($ch, CURLOPT_COOKIESESSION, true);
-// //gotta go fast, security later on
-// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-// $server_output = curl_exec($ch);
-// var_dump($server_output);
-
-
-
-
-
-// //need to encode payload brfore sent
-// $body = array('topic' => 'aquaponic/pump', 'qos' => 0, 'payload' => base64_encode($i), 'retain' => false, 'dup' => false, 'tokenId' => $cookies);
-// $body = json_encode($body);
-// // $body = base64_encode($body);
-
-// print $body;
-// curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/publish");
-// curl_setopt($ch, CURLOPT_POST, 1);
-// curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-// curl_setopt($ch, CURLOPT_COOKIE, 'tokenId=' . $cookies);
-// // curl_setopt($ch, CURLOPT_COOKIESESSION, true);
-// //gotta go fast, security later on
-// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-// $server_output = curl_exec($ch);
-
-
-//need to encode payload brfore sent
-// $body = array('topic' => 'aquaponic/airtemperature', 'qos' => 1, 'payload' => base64_encode('99'), 'retain' => true, 'dup' => false, 'tokenId' => $cookies);
-// $body = json_encode($body);
-
-// print $body;
-// curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/publish");
-// curl_setopt($ch, CURLOPT_POST, 1);
-// curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-// curl_setopt($ch, CURLOPT_COOKIE, 'tokenId=' . $cookies);
-// //gotta go fast, security later on
-// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-// $server_output = curl_exec($ch);
-
-// print $server_output;
-
-
-
-// $body = array('tokenId' => $cookies);
-// $body = json_encode($body);
-
-// print $body;
-// curl_setopt($ch, CURLOPT_URL,"https://node02.myqtthub.com/pull");
-// curl_setopt($ch, CURLOPT_POST, 1);
-// curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-// curl_setopt($ch, CURLOPT_COOKIE, 'tokenId=' . $cookies);
-// // curl_setopt($ch, CURLOPT_COOKIESESSION, true);
-// //gotta go fast, security later on
-// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-// $server_output = curl_exec($ch);
-// var_dump($server_output);
-
-
-
-// curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/logout");
-// $server_output = curl_exec($ch);
-// var_dump($server_output);
-
-
-fwrite($fp, time() . "---------------------------------------------------------------\n");
-fclose($fp);
-
-curl_close($ch);
