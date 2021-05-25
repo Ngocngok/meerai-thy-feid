@@ -147,7 +147,7 @@ function fetchData($topic)
 function sendResult($content)
 {
     $rep = "";
-    if ($content == "ERROR") {
+    if (strcmp("ERROR", $content) == 0) {
         $rep = "The system encountered an error while fetching data! Maybe the aquaponic system is offline!";
         fwrite($GLOBALS['fp'], " failed to retreive data ");
     } else {
