@@ -140,6 +140,7 @@ function fetchData($topic)
         sleep(5);
     }
     $arg1 = "ERROR";
+    fwrite($GLOBALS['fp'], " failed to retreive data1 ");
     sendResult($arg1);
     return;
 }
