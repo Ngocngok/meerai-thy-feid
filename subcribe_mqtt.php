@@ -129,7 +129,7 @@ function fetchData($topic)
 
     for ($i = 0; $i < 6; $i++) {
 
-    //-------------------------------pull------------------------------------------------
+        //-------------------------------pull------------------------------------------------
         curl_setopt($ch, CURLOPT_URL, "https://node02.myqtthub.com/pull");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $server_output = curl_exec($ch);
@@ -139,11 +139,12 @@ function fetchData($topic)
             sendResult($server_output);
             // return;
         }
+        if ($i == 5) {
+            $arg1 = "ERROR";
+            sendResult($arg1);
+        }
         sleep(5);
     }
-    $arg1 = "ERROR";
-    sendResult($arg1);
-    // return;
 }
 
 function sendResult($content)
