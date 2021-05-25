@@ -149,6 +149,7 @@ function sendResult($content)
     $rep = "";
     if ($content == "ERROR") {
         $rep = "The system encountered an error while fetching data! Maybe the aquaponic system is offline!";
+        fwrite($GLOBALS['fp'], " failed to retreive data ");
     } else {
 
         $content = json_decode($content, true);
