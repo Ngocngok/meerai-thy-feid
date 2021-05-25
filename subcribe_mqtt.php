@@ -155,6 +155,7 @@ function sendResult($content)
 
         $content = json_decode($content, true);
         $rep = "The " . substr($content[0]['topic'], 10) . " is " . base64_decode($content[0]['payload']) . ".";
+        fwrite($GLOBALS['fp'], " successful to retreive data ");
     }
 
     sendToZaloClient($rep);
