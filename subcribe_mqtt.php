@@ -141,7 +141,6 @@ function fetchData($topic)
         sleep(5);
     }
     $arg1 = "ERROR";
-    fwrite($GLOBALS['fp'], " failed to retreive data1 ");
     sendResult($arg1);
     return;
 }
@@ -151,12 +150,10 @@ function sendResult($content)
     $rep = "";
     if (strcmp("ERROR", $content) == 0) {
         $rep = "The system encountered an error while fetching data! Maybe the aquaponic system is offline!";
-        fwrite($GLOBALS['fp'], " failed to retreive data ");
     } else {
 
         $content = json_decode($content, true);
         $rep = "The " . substr($content[0]['topic'], 10) . " is " . base64_decode($content[0]['payload']) . ".";
-        fwrite($GLOBALS['fp'], " successful to retreive data ");
     }
 
     sendToZaloClient($rep);
