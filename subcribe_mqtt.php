@@ -45,6 +45,7 @@ function helpFunction()
 {
     $rep = 'Some common usage: #airtemperature, #watertemperature, #waterdistance, #level, #turnonpump, #turnoffpump, #turnonvalve, #turnoffvalve';
     sendToZaloClient($rep);
+    return;
 }
 
 function remoteControll($equipment, $option)
@@ -138,7 +139,8 @@ function fetchData($topic)
         }
         sleep(5);
     }
-    sendResult("ERROR");
+    $arg1 = "ERROR";
+    sendResult($arg1);
     return;
 }
 
@@ -146,7 +148,7 @@ function sendResult($content)
 {
     $rep = "";
     if ($content == "ERROR") {
-        $rep = "The system encountered an error while fetching data!";
+        $rep = "The system encountered an error while fetching data! Maybe the aquaponic system is offline!";
     } else {
 
         $content = json_decode($content, true);
