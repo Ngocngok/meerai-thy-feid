@@ -136,13 +136,13 @@ function fetchData($topic)
         // fwrite($GLOBALS['fp'], $server_output);
         if (strlen($server_output) != 2) {
             sendResult($server_output);
-            return;
+            // return;
         }
         sleep(5);
     }
     $arg1 = "ERROR";
     sendResult($arg1);
-    return;
+    // return;
 }
 
 function sendResult($content)
