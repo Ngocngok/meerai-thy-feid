@@ -121,6 +121,7 @@ function fetchData($topic)
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
     curl_setopt($ch, CURLOPT_COOKIE, 'tokenId=' . $cookies);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     //gotta go fast, security later on
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
