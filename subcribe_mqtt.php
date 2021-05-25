@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
+ignore_user_abort(true);
 $fp = fopen('data.txt', 'a'); //opens file in append mode  
 
 
