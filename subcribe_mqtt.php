@@ -137,7 +137,7 @@ function fetchData($topic)
         // fwrite($GLOBALS['fp'], $server_output);
         if (strlen($server_output) != 2) {
             sendResult($server_output);
-            // return;
+            return;
         }
         if ($i == 5) {
             $arg1 = "ERROR";
